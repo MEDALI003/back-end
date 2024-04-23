@@ -16,22 +16,21 @@ exports.getbasket = async (req, res) => {
         let facture = [];
         const foundBasket = await basket.find();
         for (let i = 0; i < foundBasket.length; i++) {
-            
+            let tot=0
             const foundUser = await user.findOne({_id: foundBasket[i].userId});
             const userName = foundUser.name + " " + foundUser.lastName;
             let prodtable = [];
             const basketItems = foundBasket[i].basket; 
             for (let j = 0; j < basketItems.length; j++) {
-                let tot=0
                 const foundProduct = await product.findOne({_id: basketItems[j].productId});
                 tot=tot+foundProduct.price*basketItems[j].quantity
-                prodtable.push({...foundProduct, quantity: basketItems[j].quantity,totalp:basketItems[j].quantity*parseInt(foundProduct.price),tot:tot});
+                prodtable.push({...foundProduct, quantity: basketItems[j].quantity,totalp:basketItems[j].quantity*parseInt(foundProduct.price)});
             }
             facture.push({
                 userName: userName,
                 basket: prodtable,
                 date: foundBasket[i].date,
-                
+                tot:tot
             });
         }
         res.status(200).send({facture}); 
